@@ -16,6 +16,7 @@ const LS_KEY = "lupatini_pos_view";
 patch(ProductList.prototype, {
     setup() {
         super.setup();
+        console.log("[lupatini] ProductList patch activo");
         const saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
         this.lupatiniView = useState({
             mode: saved.mode || "card",
