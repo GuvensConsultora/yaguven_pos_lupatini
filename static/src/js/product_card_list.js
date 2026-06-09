@@ -1,18 +1,25 @@
 /**
- * Agrega precio y cantidad disponible a cada tarjeta de producto.
- * Se muestran en ambos modos (tarjeta y lista compacta).
- * Usa env.utils (ya disponible en ProductCard para formatProductQty).
+ * Agrega precio (de la lista activa) y cantidad disponible a cada tarjeta.
+ * - lupatiniPrice: usa product.getDisplayPrice(pricelist, 1) si hay lista activa;
+ *   cae a lst_price si no hay lista o el método no existe en esta versión.
+ * - lupatiniQty: stock disponible formateado.
  */
 import { ProductCard } from "@point_of_sale/app/components/product_card/product_card";
 import { patch } from "@web/core/utils/patch";
 
 patch(ProductCard.prototype, {
     get lupatiniPrice() {
-        const price = this.props.product?.lst_price ?? 0;
+        const product = this.props.product;
+        if (!product) return "";
         try {
+            const pricelist = this.pos?.selectedOrder?.pricelist_id;
+            const price =
+                pricelist && typeof product.getDisplayPrice === "function"
+                    ? product.getDisplayPrice(pricelist, 1)
+                    : (product.lst_price ?? 0);
             return this.env.utils.formatCurrency(price);
         } catch {
-            return String(price);
+            return String(product.lst_price ?? 0);
         }
     },
 
