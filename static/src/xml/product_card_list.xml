@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="point_of_sale.ProductCard" t-inherit-mode="extension">
+        <!-- Precio y cantidad disponible debajo del nombre, en ambos modos -->
+        <xpath expr="//div[hasclass('product-name')]" position="after">
+            <div class="lupatini-card-info">
+                <span class="lupatini-price" t-esc="lupatiniPrice"/>
+                <span class="lupatini-qty">
+                    <i class="fa fa-cubes me-1"/>
+                    <t t-esc="lupatiniQty"/>
+                </span>
+            </div>
+        </xpath>
+    </t>
+</templates>

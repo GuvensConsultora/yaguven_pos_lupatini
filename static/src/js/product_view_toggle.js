@@ -1,8 +1,8 @@
 /**
- * Toggle vista tarjeta/lista en el POS + tamaño ajustable de tarjetas.
- * Parcheado sobre ProductScreen (en O19 la grilla está directamente ahí,
- * no en un ProductList separado como en versiones anteriores).
- * Estado persistido en localStorage.
+ * Toggle tarjeta/lista en el POS.
+ * - Tarjeta: grid grande (default 200 px).
+ * - Lista: grid compacto (default 160 px).
+ * Cada modo recuerda su propio tamaño. Estado persistido en localStorage.
  */
 import { ProductScreen } from "@point_of_sale/app/screens/product_screen/product_screen";
 import { patch } from "@web/core/utils/patch";
@@ -14,28 +14,36 @@ const LS_KEY = "lupatini_pos_view";
 patch(ProductScreen.prototype, {
     setup() {
         super.setup();
-        console.log("[lupatini] ProductScreen patch activo");
         const saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
         this.lupatiniView = useState({
-            mode: saved.mode || "card",
-            sizeIdx: saved.sizeIdx ?? 2,
+            mode:         saved.mode         || "card",
+            cardSizeIdx:  saved.cardSizeIdx  ?? 2,   // 200 px
+            listSizeIdx:  saved.listSizeIdx  ?? 1,   // 160 px
         });
         useEffect(
             () => {
                 document.documentElement.style.setProperty(
                     "--lupatini-card-w",
-                    SIZES[this.lupatiniView.sizeIdx] + "px"
+                    SIZES[this._lupatiniActiveSizeIdx()] + "px"
                 );
                 document.documentElement.classList.toggle(
                     "lupatini-list-mode",
                     this.lupatiniView.mode === "list"
                 );
-                return () => {
-                    document.documentElement.classList.remove("lupatini-list-mode");
-                };
+                return () => document.documentElement.classList.remove("lupatini-list-mode");
             },
-            () => [this.lupatiniView.mode, this.lupatiniView.sizeIdx]
+            () => [this.lupatiniView.mode, this.lupatiniView.cardSizeIdx, this.lupatiniView.listSizeIdx]
         );
+    },
+
+    _lupatiniActiveSizeIdx() {
+        return this.lupatiniIsCard
+            ? this.lupatiniView.cardSizeIdx
+            : this.lupatiniView.listSizeIdx;
+    },
+
+    get lupatiniCardWidth() {
+        return SIZES[this._lupatiniActiveSizeIdx()] + "px";
     },
 
     get lupatiniIsCard() {
@@ -43,11 +51,11 @@ patch(ProductScreen.prototype, {
     },
 
     get lupatiniIsMinSize() {
-        return this.lupatiniView.sizeIdx === 0;
+        return this._lupatiniActiveSizeIdx() === 0;
     },
 
     get lupatiniIsMaxSize() {
-        return this.lupatiniView.sizeIdx === SIZES.length - 1;
+        return this._lupatiniActiveSizeIdx() === SIZES.length - 1;
     },
 
     lupatiniToggleMode() {
@@ -57,22 +65,25 @@ patch(ProductScreen.prototype, {
 
     lupatiniSizeUp() {
         if (!this.lupatiniIsMaxSize) {
-            this.lupatiniView.sizeIdx++;
+            if (this.lupatiniIsCard) this.lupatiniView.cardSizeIdx++;
+            else this.lupatiniView.listSizeIdx++;
             this._lupatiniSave();
         }
     },
 
     lupatiniSizeDown() {
         if (!this.lupatiniIsMinSize) {
-            this.lupatiniView.sizeIdx--;
+            if (this.lupatiniIsCard) this.lupatiniView.cardSizeIdx--;
+            else this.lupatiniView.listSizeIdx--;
             this._lupatiniSave();
         }
     },
 
     _lupatiniSave() {
         localStorage.setItem(LS_KEY, JSON.stringify({
-            mode: this.lupatiniView.mode,
-            sizeIdx: this.lupatiniView.sizeIdx,
+            mode:        this.lupatiniView.mode,
+            cardSizeIdx: this.lupatiniView.cardSizeIdx,
+            listSizeIdx: this.lupatiniView.listSizeIdx,
         }));
     },
 });
