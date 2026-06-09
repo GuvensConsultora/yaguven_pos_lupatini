@@ -5,22 +5,22 @@
         <!-- 1. Barra unificada: botón categorías + breadcrumb + controles de vista -->
         <xpath expr="//CategorySelector" position="before">
             <div class="lupatini-nav-bar">
-                <button class="lupatini-btn-categ" t-on-click="() => lupatiniOpenTree()">
+                <button class="lupatini-btn-categ" t-on-click="() => this.lupatiniOpenTree()">
                     <i class="fa fa-sitemap me-1"/>
                     <span>Categorías</span>
                 </button>
                 <LupatiniBreadcrumb/>
                 <div class="lupatini-view-controls ms-auto">
                     <button class="lupatini-btn-view"
-                            t-on-click="lupatiniToggleMode"
+                            t-on-click="() => this.lupatiniToggleMode()"
                             t-att-title="lupatiniIsCard ? 'Ver como lista' : 'Ver como tarjetas'">
                         <i t-if="lupatiniIsCard" class="fa fa-list-ul"/>
                         <i t-else="" class="fa fa-th-large"/>
                     </button>
                     <t t-if="lupatiniIsCard">
-                        <button class="lupatini-btn-size" t-on-click="lupatiniSizeDown"
+                        <button class="lupatini-btn-size" t-on-click="() => this.lupatiniSizeDown()"
                                 title="Tarjetas más chicas" t-att-disabled="lupatiniIsMinSize">−</button>
-                        <button class="lupatini-btn-size" t-on-click="lupatiniSizeUp"
+                        <button class="lupatini-btn-size" t-on-click="() => this.lupatiniSizeUp()"
                                 title="Tarjetas más grandes" t-att-disabled="lupatiniIsMaxSize">+</button>
                     </t>
                 </div>
