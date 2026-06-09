@@ -2,32 +2,38 @@
 <templates xml:space="preserve">
     <t t-inherit="point_of_sale.ProductScreen" t-inherit-mode="extension">
 
-        <!--
-            Barra de controles: DESPUÉS de CategorySelector.
-            CategorySelector tiene su propio t-if (independiente del chain
-            BarcodeVideoScanner/t-elif/t-else), así que insertar "after"
-            no rompe ninguna cadena condicional.
-        -->
-        <xpath expr="//CategorySelector" position="after">
-            <div class="lupatini-view-bar">
-                <button class="lupatini-btn-view"
-                        t-on-click="lupatiniToggleMode"
-                        t-att-title="lupatiniIsCard ? 'Ver como lista' : 'Ver como tarjetas'">
-                    <i t-if="lupatiniIsCard" class="fa fa-list-ul"/>
-                    <i t-else="" class="fa fa-th-large"/>
+        <!-- 1. Barra unificada: botón categorías + breadcrumb + controles de vista -->
+        <xpath expr="//CategorySelector" position="before">
+            <div class="lupatini-nav-bar">
+                <button class="lupatini-btn-categ" t-on-click="() => lupatiniOpenTree()">
+                    <i class="fa fa-sitemap me-1"/>
+                    <span>Categorías</span>
                 </button>
-                <t t-if="lupatiniIsCard">
-                    <button class="lupatini-btn-size"
-                            t-on-click="lupatiniSizeDown"
-                            title="Tarjetas más chicas"
-                            t-att-disabled="lupatiniIsMinSize">−</button>
-                    <button class="lupatini-btn-size"
-                            t-on-click="lupatiniSizeUp"
-                            title="Tarjetas más grandes"
-                            t-att-disabled="lupatiniIsMaxSize">+</button>
-                </t>
+                <LupatiniBreadcrumb/>
+                <div class="lupatini-view-controls ms-auto">
+                    <button class="lupatini-btn-view"
+                            t-on-click="lupatiniToggleMode"
+                            t-att-title="lupatiniIsCard ? 'Ver como lista' : 'Ver como tarjetas'">
+                        <i t-if="lupatiniIsCard" class="fa fa-list-ul"/>
+                        <i t-else="" class="fa fa-th-large"/>
+                    </button>
+                    <t t-if="lupatiniIsCard">
+                        <button class="lupatini-btn-size" t-on-click="lupatiniSizeDown"
+                                title="Tarjetas más chicas" t-att-disabled="lupatiniIsMinSize">−</button>
+                        <button class="lupatini-btn-size" t-on-click="lupatiniSizeUp"
+                                title="Tarjetas más grandes" t-att-disabled="lupatiniIsMaxSize">+</button>
+                    </t>
+                </div>
             </div>
         </xpath>
+
+        <!-- 2. Overlay del árbol de categorías -->
+        <xpath expr="//CategorySelector" position="after">
+            <LupatiniCategoryTree t-if="lupatiniView.treeOpen" onClose.bind="lupatiniCloseTree"/>
+        </xpath>
+
+        <!-- 3. Eliminar el CategorySelector nativo -->
+        <xpath expr="//CategorySelector" position="replace"/>
 
     </t>
 </templates>

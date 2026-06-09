@@ -1,15 +1,27 @@
 /**
- * Toggle tarjeta/lista en el POS.
+ * Toggle tarjeta/lista en el POS + navegación de categorías custom.
  * - Tarjeta: grid grande (default 200 px).
- * - Lista: grid compacto (default 160 px).
- * Cada modo recuerda su propio tamaño. Estado persistido en localStorage.
+ * - Lista: filas compactas (default 160 px).
+ * - Categorías: reemplaza CategorySelector nativo por árbol lateral + breadcrumb.
+ * Estado de vista persistido en localStorage.
  */
 import { ProductScreen } from "@point_of_sale/app/screens/product_screen/product_screen";
 import { patch } from "@web/core/utils/patch";
 import { useState, useEffect } from "@odoo/owl";
+import { LupatiniCategoryTree } from "./category_tree";
+import { LupatiniBreadcrumb } from "./breadcrumb";
 
 const SIZES = [130, 160, 200, 260, 320];
 const LS_KEY = "lupatini_pos_view";
+
+// Registrar los componentes de categorías en ProductScreen.
+patch(ProductScreen, {
+    components: {
+        ...ProductScreen.components,
+        LupatiniCategoryTree,
+        LupatiniBreadcrumb,
+    },
+});
 
 patch(ProductScreen.prototype, {
     setup() {
@@ -19,6 +31,7 @@ patch(ProductScreen.prototype, {
             mode:         saved.mode         || "card",
             cardSizeIdx:  saved.cardSizeIdx  ?? 2,   // 200 px
             listSizeIdx:  saved.listSizeIdx  ?? 1,   // 160 px
+            treeOpen:     false,
         });
         useEffect(
             () => {
@@ -78,6 +91,9 @@ patch(ProductScreen.prototype, {
             this._lupatiniSave();
         }
     },
+
+    lupatiniOpenTree()  { this.lupatiniView.treeOpen = true;  },
+    lupatiniCloseTree() { this.lupatiniView.treeOpen = false; },
 
     _lupatiniSave() {
         localStorage.setItem(LS_KEY, JSON.stringify({

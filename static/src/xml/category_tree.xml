@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- ─── Overlay árbol de categorías ─────────────────────────────── -->
+    <t t-name="yaguven_pos_lupatini.CategoryTree">
+        <div class="lupatini-tree-overlay">
+            <div class="lupatini-tree-backdrop" t-on-click="() => props.onClose()"/>
+            <div class="lupatini-tree-panel">
+                <div class="lupatini-tree-header">
+                    <span class="lupatini-tree-title">Categorías</span>
+                    <button class="lupatini-tree-close" t-on-click="() => props.onClose()">✕</button>
+                </div>
+                <div class="lupatini-tree-body">
+                    <div class="lupatini-tree-row lupatini-tree-row--all"
+                         t-att-class="{ 'lupatini-tree-row--active': !selectedCategoryId }"
+                         t-on-click="() => clearCategory()">
+                        <span class="lupatini-tree-caret lupatini-tree-caret--leaf"/>
+                        <span class="lupatini-tree-name">Todos los productos</span>
+                    </div>
+                    <t t-foreach="roots" t-as="node" t-key="node.id">
+                        <t t-call="yaguven_pos_lupatini.CategoryTreeNode">
+                            <t t-set="node" t-value="node"/>
+                        </t>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="yaguven_pos_lupatini.CategoryTreeNode">
+        <div class="lupatini-tree-row"
+             t-att-class="{ 'lupatini-tree-row--active': selectedCategoryId === node.id }"
+             t-att-style="'padding-left:' + (12 + node.depth * 20) + 'px'">
+            <button class="lupatini-tree-caret"
+                    t-if="node.children.length"
+                    t-on-click.stop="() => toggleExpand(node)">
+                <t t-esc="isExpanded(node) ? '▼' : '▶'"/>
+            </button>
+            <span class="lupatini-tree-caret lupatini-tree-caret--leaf" t-else=""/>
+            <span class="lupatini-tree-name"
+                  t-on-click="() => selectCategory(node)"
+                  t-esc="node.name"/>
+        </div>
+        <t t-if="node.children.length and isExpanded(node)">
+            <t t-foreach="node.children" t-as="child" t-key="child.id">
+                <t t-call="yaguven_pos_lupatini.CategoryTreeNode">
+                    <t t-set="node" t-value="child"/>
+                </t>
+            </t>
+        </t>
+    </t>
+
+    <!-- ─── Breadcrumb de categoría seleccionada ─────────────────── -->
+    <t t-name="yaguven_pos_lupatini.Breadcrumb">
+        <div class="lupatini-breadcrumb" t-if="trail.length">
+            <t t-foreach="trail" t-as="crumb" t-key="crumb.id">
+                <span t-if="crumb_index > 0" class="lupatini-breadcrumb-sep">/</span>
+                <button class="lupatini-breadcrumb-item"
+                        t-att-class="{ 'lupatini-breadcrumb-item--current': crumb_last }"
+                        t-on-click="() => selectCrumb(crumb.id)"
+                        t-esc="crumb.name"/>
+            </t>
+            <button class="lupatini-breadcrumb-clear" t-on-click="() => clearCategory()" title="Ver todos">
+                <i class="fa fa-times-circle"/>
+            </button>
+        </div>
+    </t>
+
+</templates>
