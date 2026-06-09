@@ -2,8 +2,13 @@
 <templates xml:space="preserve">
     <t t-inherit="point_of_sale.ProductScreen" t-inherit-mode="extension">
 
-        <!-- Barra de controles: antes del área scrollable de productos -->
-        <xpath expr="//div[hasclass('overflow-y-auto')]" position="before">
+        <!--
+            Barra de controles: DESPUÉS de CategorySelector.
+            CategorySelector tiene su propio t-if (independiente del chain
+            BarcodeVideoScanner/t-elif/t-else), así que insertar "after"
+            no rompe ninguna cadena condicional.
+        -->
+        <xpath expr="//CategorySelector" position="after">
             <div class="lupatini-view-bar">
                 <button class="lupatini-btn-view"
                         t-on-click="lupatiniToggleMode"
