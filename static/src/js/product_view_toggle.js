@@ -1,31 +1,41 @@
 /**
  * Toggle vista tarjeta/lista en el POS + tamaño ajustable de tarjetas.
- * Estado persistido en localStorage → sobrevive cierre de sesión POS.
- *
- * Componente parcheado: ProductList
- * Path asumido por convención Odoo 19 — verificar en browser si el patch
- * no surte efecto (podría haber cambiado el nombre entre subversiones).
+ * Parcheado sobre ProductScreen (en O19 la grilla está directamente ahí,
+ * no en un ProductList separado como en versiones anteriores).
+ * Estado persistido en localStorage.
  */
-import { ProductList } from "@point_of_sale/app/screens/product_screen/product_list/product_list";
+import { ProductScreen } from "@point_of_sale/app/screens/product_screen/product_screen";
 import { patch } from "@web/core/utils/patch";
-import { useState } from "@odoo/owl";
+import { useState, useEffect } from "@odoo/owl";
 
 const SIZES = [130, 160, 200, 260, 320];
 const LS_KEY = "lupatini_pos_view";
 
-patch(ProductList.prototype, {
+patch(ProductScreen.prototype, {
     setup() {
         super.setup();
-        console.log("[lupatini] ProductList patch activo");
+        console.log("[lupatini] ProductScreen patch activo");
         const saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
         this.lupatiniView = useState({
             mode: saved.mode || "card",
-            sizeIdx: saved.sizeIdx ?? 2,   // default: 200px (índice 2)
+            sizeIdx: saved.sizeIdx ?? 2,
         });
-    },
-
-    get lupatiniCardWidth() {
-        return SIZES[this.lupatiniView.sizeIdx] + "px";
+        useEffect(
+            () => {
+                document.documentElement.style.setProperty(
+                    "--lupatini-card-w",
+                    SIZES[this.lupatiniView.sizeIdx] + "px"
+                );
+                document.documentElement.classList.toggle(
+                    "lupatini-list-mode",
+                    this.lupatiniView.mode === "list"
+                );
+                return () => {
+                    document.documentElement.classList.remove("lupatini-list-mode");
+                };
+            },
+            () => [this.lupatiniView.mode, this.lupatiniView.sizeIdx]
+        );
     },
 
     get lupatiniIsCard() {

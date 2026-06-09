@@ -1,6 +1,8 @@
 /* ================================================================
    Yagüven — POS Lupatini Display  v19.0.1.1.0
    Toggle tarjeta/lista + tamaño ajustable, nombre completo visible.
+   CSS var --lupatini-card-w y clase lupatini-list-mode se aplican
+   sobre :root vía JS (useEffect en ProductScreen).
    ================================================================ */
 
 /* ─── Barra de controles ─────────────────────────────────────────── */
@@ -39,18 +41,17 @@
 
 /* ─── Modo tarjeta ───────────────────────────────────────────────── */
 
-/* Columnas controladas por la variable; default 200 px si el JS no cargó */
-.product-list:not(.lupatini-list-mode) {
+:root:not(.lupatini-list-mode) .product-list {
     grid-template-columns: repeat(auto-fill, minmax(var(--lupatini-card-w, 200px), 1fr)) !important;
 }
 
-.product-list:not(.lupatini-list-mode) .product {
+:root:not(.lupatini-list-mode) .product-list .product {
     height: auto !important;
     min-height: 160px !important;
 }
 
 /* Nombre: hasta 4 líneas, sin corte con "…" */
-.product-list:not(.lupatini-list-mode) .product .product-name {
+:root:not(.lupatini-list-mode) .product-list .product .product-name {
     white-space: normal !important;
     overflow: visible !important;
     text-overflow: unset !important;
@@ -65,15 +66,14 @@
 
 /* ─── Modo lista ─────────────────────────────────────────────────── */
 
-.product-list.lupatini-list-mode {
+:root.lupatini-list-mode .product-list {
     display: flex !important;
     flex-direction: column !important;
     grid-template-columns: none !important;
-    overflow-y: auto !important;
     gap: 0 !important;
 }
 
-.product-list.lupatini-list-mode .product {
+:root.lupatini-list-mode .product-list .product {
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
@@ -87,13 +87,13 @@
     margin: 0 !important;
 }
 
-.product-list.lupatini-list-mode .product:hover {
+:root.lupatini-list-mode .product-list .product:hover {
     background: #f0f7ff !important;
 }
 
-/* Imagen: thumbnail pequeño a la izquierda */
-.product-list.lupatini-list-mode .product img,
-.product-list.lupatini-list-mode .product .product-img {
+/* Imagen: thumbnail a la izquierda */
+:root.lupatini-list-mode .product-list .product img,
+:root.lupatini-list-mode .product-list .product .product-img {
     width: 40px !important;
     height: 40px !important;
     min-width: 40px !important;
@@ -102,7 +102,7 @@
 }
 
 /* Nombre: completo, sin límite de líneas */
-.product-list.lupatini-list-mode .product .product-name {
+:root.lupatini-list-mode .product-list .product .product-name {
     flex: 1 !important;
     white-space: normal !important;
     overflow: visible !important;
@@ -115,9 +115,9 @@
     line-height: 1.3 !important;
 }
 
-/* Precio: a la derecha, sin corte */
-.product-list.lupatini-list-mode .product .price-tag,
-.product-list.lupatini-list-mode .product .product-price {
+/* Precio: a la derecha */
+:root.lupatini-list-mode .product-list .product .price-tag,
+:root.lupatini-list-mode .product-list .product .product-price {
     font-size: 14px !important;
     font-weight: 600 !important;
     white-space: nowrap !important;

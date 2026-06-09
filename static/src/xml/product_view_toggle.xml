@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
-    <t t-inherit="point_of_sale.ProductList" t-inherit-mode="extension">
+    <t t-inherit="point_of_sale.ProductScreen" t-inherit-mode="extension">
 
-        <!-- Barra de controles: toggle lista/tarjeta + botones de tamaño -->
-        <xpath expr="//div[hasclass('product-list')]" position="before">
+        <!-- Barra de controles: antes del área scrollable de productos -->
+        <xpath expr="//div[hasclass('overflow-y-auto')]" position="before">
             <div class="lupatini-view-bar">
                 <button class="lupatini-btn-view"
                         t-on-click="lupatiniToggleMode"
@@ -22,12 +22,6 @@
                             t-att-disabled="lupatiniIsMaxSize">+</button>
                 </t>
             </div>
-        </xpath>
-
-        <!-- CSS variable de tamaño + clase de modo lista sobre el grid -->
-        <xpath expr="//div[hasclass('product-list')]" position="attributes">
-            <attribute name="t-att-class">{"lupatini-list-mode": !lupatiniIsCard}</attribute>
-            <attribute name="t-att-style">"--lupatini-card-w: " + lupatiniCardWidth</attribute>
         </xpath>
 
     </t>
