@@ -1,7 +1,8 @@
 /* ================================================================
    Yagüven — POS Lupatini Display  v19.0.1.2.0
-   Modo tarjeta: grid grande con precio+stock.
-   Modo lista: filas (tree) con precio+stock. Categorías: sin tocar.
+   CategorySelector usa la clase .product-list, por eso TODOS los
+   selectores de productos usan .product-list:not(.category-list).
+   Las categorías siempre quedan en grid con .category-list.
    ================================================================ */
 
 /* ─── Barra de controles ─────────────────────────────────────────── */
@@ -32,19 +33,26 @@
 .lupatini-btn-size:hover { background: #e0e0e0; }
 .lupatini-btn-size:disabled { opacity: 0.35; cursor: default; }
 
-/* ─── Modo tarjeta: grid con tamaño ajustable ────────────────────── */
+/* ─── Categorías: siempre en grid, columnas automáticas ─────────── */
 
-:root:not(.lupatini-list-mode) .product-list {
+.category-list {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)) !important;
+    display: grid !important;
+}
+
+/* ─── Modo tarjeta: grid de productos con tamaño ajustable ──────── */
+
+:root:not(.lupatini-list-mode) .product-list:not(.category-list) {
     grid-template-columns: repeat(auto-fill, minmax(var(--lupatini-card-w, 200px), 1fr)) !important;
 }
 
-:root:not(.lupatini-list-mode) .product-list .product {
+:root:not(.lupatini-list-mode) .product-list:not(.category-list) .product {
     height: auto !important;
     min-height: 150px !important;
 }
 
-/* Nombre: hasta 4 líneas en modo tarjeta */
-:root:not(.lupatini-list-mode) .product-list .product .product-name {
+/* Nombre: hasta 4 líneas en tarjeta */
+:root:not(.lupatini-list-mode) .product-list:not(.category-list) .product .product-name {
     white-space: normal !important;
     overflow: hidden !important;
     text-overflow: unset !important;
@@ -56,9 +64,9 @@
     max-height: 5.2em !important;
 }
 
-/* ─── Modo lista: filas (tree view) ──────────────────────────────── */
+/* ─── Modo lista: filas (tree view) — solo productos ────────────── */
 
-:root.lupatini-list-mode .product-list {
+:root.lupatini-list-mode .product-list:not(.category-list) {
     display: flex !important;
     flex-direction: column !important;
     grid-template-columns: none !important;
@@ -66,7 +74,7 @@
 }
 
 /* Cada producto = fila horizontal */
-:root.lupatini-list-mode .product-list .product {
+:root.lupatini-list-mode .product-list:not(.category-list) .product {
     display: flex !important;
     flex-direction: row !important;
     align-items: stretch !important;
@@ -80,28 +88,28 @@
     margin: 0 !important;
 }
 
-:root.lupatini-list-mode .product-list .product:hover {
+:root.lupatini-list-mode .product-list:not(.category-list) .product:hover {
     background: #f0f7ff !important;
 }
 
-/* Imagen: thumbnail cuadrado a la izquierda */
-:root.lupatini-list-mode .product-list .product .product-img {
+/* Imagen: thumbnail a la izquierda */
+:root.lupatini-list-mode .product-list:not(.category-list) .product .product-img {
     width: 64px !important;
     min-width: 64px !important;
-    padding-top: 0 !important;   /* anula ratio-4x3 */
+    padding-top: 0 !important;
     flex-shrink: 0 !important;
     border-radius: 0 !important;
 }
 
-:root.lupatini-list-mode .product-list .product .product-img img {
+:root.lupatini-list-mode .product-list:not(.category-list) .product .product-img img {
     position: relative !important;
     width: 64px !important;
     height: 64px !important;
     object-fit: contain !important;
 }
 
-/* Área de contenido: columna con nombre + info */
-:root.lupatini-list-mode .product-list .product .product-content {
+/* Contenido: nombre + info en columna */
+:root.lupatini-list-mode .product-list:not(.category-list) .product .product-content {
     flex: 1 !important;
     min-width: 0 !important;
     flex-direction: column !important;
@@ -111,7 +119,7 @@
 }
 
 /* Nombre: hasta 2 líneas en lista */
-:root.lupatini-list-mode .product-list .product .product-name {
+:root.lupatini-list-mode .product-list:not(.category-list) .product .product-name {
     white-space: normal !important;
     overflow: hidden !important;
     text-overflow: unset !important;
@@ -124,8 +132,8 @@
     font-size: 14px !important;
 }
 
-/* Info precio+stock en fila: sin borde, compacto */
-:root.lupatini-list-mode .product-list .product .lupatini-card-info {
+/* Info precio+stock en fila: sin borde, alineado a la izquierda */
+:root.lupatini-list-mode .product-list:not(.category-list) .product .lupatini-card-info {
     border-top: none !important;
     margin-top: 3px !important;
     padding-top: 0 !important;
