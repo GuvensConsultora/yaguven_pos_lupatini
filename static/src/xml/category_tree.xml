@@ -57,7 +57,7 @@
                         t-out="crumb.name"/>
             </t>
             <button class="lupatini-breadcrumb-clear" t-on-click="() => this.clearCategory()" title="Ver todos">
-                <i class="fa fa-times-circle"/>
+                <i class="oi" data-icon="cancel"/>
             </button>
         </div>
     </t>

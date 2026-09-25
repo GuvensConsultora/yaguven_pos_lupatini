@@ -6,7 +6,7 @@
         <xpath expr="//CategorySelector" position="before">
             <div class="lupatini-nav-bar">
                 <button class="lupatini-btn-categ" t-on-click="() => this.lupatiniOpenTree()">
-                    <i class="fa fa-sitemap me-1"/>
+                    <i class="oi me-1" data-icon="account_tree"/>
                     <span>Categorías</span>
                 </button>
                 <LupatiniBreadcrumb/>
@@ -14,8 +14,8 @@
                     <button class="lupatini-btn-view"
                             t-on-click="() => this.lupatiniToggleMode()"
                             t-att-title="this.lupatiniIsCard ? 'Ver como lista' : 'Ver como tarjetas'">
-                        <i t-if="this.lupatiniIsCard" class="fa fa-list-ul"/>
-                        <i t-else="" class="fa fa-th-large"/>
+                        <i t-if="this.lupatiniIsCard" class="oi" data-icon="view_list"/>
+                        <i t-else="" class="oi" data-icon="grid_view"/>
                     </button>
                     <t t-if="this.lupatiniIsCard">
                         <button class="lupatini-btn-size" t-on-click="() => this.lupatiniSizeDown()"
