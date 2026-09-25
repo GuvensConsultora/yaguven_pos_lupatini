@@ -7,9 +7,10 @@
  */
 import { ProductScreen } from "@point_of_sale/app/screens/product_screen/product_screen";
 import { patch } from "@web/core/utils/patch";
-import { useState, useEffect } from "@odoo/owl";
+import { proxy } from "@odoo/owl";
 import { LupatiniCategoryTree } from "./category_tree";
 import { LupatiniBreadcrumb } from "./breadcrumb";
+import { useLayoutEffect } from "@web/owl2/utils";
 
 const SIZES = [130, 160, 200, 260, 320];
 const LS_KEY = "lupatini_pos_view";
@@ -27,13 +28,13 @@ patch(ProductScreen.prototype, {
     setup() {
         super.setup();
         const saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
-        this.lupatiniView = useState({
+        this.lupatiniView = proxy({
             mode:         saved.mode         || "card",
             cardSizeIdx:  saved.cardSizeIdx  ?? 2,   // 200 px
             listSizeIdx:  saved.listSizeIdx  ?? 1,   // 160 px
             treeOpen:     false,
         });
-        useEffect(
+        useLayoutEffect(
             () => {
                 document.documentElement.style.setProperty(
                     "--lupatini-card-w",

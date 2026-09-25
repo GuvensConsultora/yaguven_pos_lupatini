@@ -35,9 +35,9 @@ patch(ProductCard.prototype, {
                 typeof product.getPrice === "function"
                     ? product.getPrice(pricelist, 1, 0, false)
                     : (product.list_price ?? product.lst_price ?? 0);
-            return this.env.utils.formatCurrency(price);
+            return this.lupatiniPos.formatCurrency(price);
         } catch {
-            return this.env.utils.formatCurrency(product.list_price ?? 0);
+            return this.lupatiniPos.formatCurrency(product.list_price ?? 0);
         }
     },
 
@@ -47,7 +47,7 @@ patch(ProductCard.prototype, {
             return "—";
         }
         try {
-            return this.env.utils.formatProductQty(qty, false);
+            return this.lupatiniPos.formatProductQty(qty, false);
         } catch {
             return String(qty);
         }

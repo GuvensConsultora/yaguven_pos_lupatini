@@ -13,15 +13,15 @@
                 <div class="lupatini-view-controls ms-auto">
                     <button class="lupatini-btn-view"
                             t-on-click="() => this.lupatiniToggleMode()"
-                            t-att-title="lupatiniIsCard ? 'Ver como lista' : 'Ver como tarjetas'">
-                        <i t-if="lupatiniIsCard" class="fa fa-list-ul"/>
+                            t-att-title="this.lupatiniIsCard ? 'Ver como lista' : 'Ver como tarjetas'">
+                        <i t-if="this.lupatiniIsCard" class="fa fa-list-ul"/>
                         <i t-else="" class="fa fa-th-large"/>
                     </button>
-                    <t t-if="lupatiniIsCard">
+                    <t t-if="this.lupatiniIsCard">
                         <button class="lupatini-btn-size" t-on-click="() => this.lupatiniSizeDown()"
-                                title="Tarjetas más chicas" t-att-disabled="lupatiniIsMinSize">−</button>
+                                title="Tarjetas más chicas" t-att-disabled="this.lupatiniIsMinSize">−</button>
                         <button class="lupatini-btn-size" t-on-click="() => this.lupatiniSizeUp()"
-                                title="Tarjetas más grandes" t-att-disabled="lupatiniIsMaxSize">+</button>
+                                title="Tarjetas más grandes" t-att-disabled="this.lupatiniIsMaxSize">+</button>
                     </t>
                 </div>
             </div>
@@ -29,7 +29,7 @@
 
         <!-- 2. Overlay del árbol de categorías -->
         <xpath expr="//CategorySelector" position="after">
-            <LupatiniCategoryTree t-if="lupatiniView.treeOpen" onClose.bind="lupatiniCloseTree"/>
+            <LupatiniCategoryTree t-if="this.lupatiniView.treeOpen" onClose.bind="this.lupatiniCloseTree"/>
         </xpath>
 
         <!-- 3. Eliminar el CategorySelector nativo -->

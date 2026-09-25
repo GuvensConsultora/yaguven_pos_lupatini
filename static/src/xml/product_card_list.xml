@@ -4,10 +4,10 @@
         <!-- Precio y cantidad disponible debajo del nombre, en ambos modos -->
         <xpath expr="//div[hasclass('product-name')]" position="after">
             <div class="lupatini-card-info">
-                <span class="lupatini-price" t-esc="lupatiniPrice"/>
+                <span class="lupatini-price" t-out="this.lupatiniPrice"/>
                 <span class="lupatini-qty">
                     <i class="fa fa-cubes me-1"/>
-                    <t t-esc="lupatiniQty"/>
+                    <t t-out="this.lupatiniQty"/>
                 </span>
             </div>
         </xpath>

@@ -4,7 +4,6 @@ import { usePos } from "@point_of_sale/app/hooks/pos_hook";
 
 export class LupatiniBreadcrumb extends Component {
     static template = "yaguven_pos_lupatini.Breadcrumb";
-    static props = {};
 
     setup() {
         this.pos = usePos();

@@ -1,14 +1,15 @@
 /** @odoo-module **/
-import { Component, useState } from "@odoo/owl";
+import { Component, proxy, useProps, t } from "@odoo/owl";
 import { usePos } from "@point_of_sale/app/hooks/pos_hook";
 
 export class LupatiniCategoryTree extends Component {
     static template = "yaguven_pos_lupatini.CategoryTree";
-    static props = { onClose: Function };
+    // Odoo 20 (Owl 3): los props se declaran con useProps, no con static props.
+    props = useProps({ onClose: t.function() });
 
     setup() {
         this.pos = usePos();
-        this.state = useState({ expanded: {} });
+        this.state = proxy({ expanded: {} });
     }
 
     _rel(val) {
