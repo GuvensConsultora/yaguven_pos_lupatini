@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- Tope de descuento en caja, lista por lista (vacío por defecto). -->
+  <record id="view_product_pricelist_form_tope_descuento" model="ir.ui.view">
+    <field name="name">product.pricelist.form.tope.descuento</field>
+    <field name="model">product.pricelist</field>
+    <field name="inherit_id" ref="product.product_pricelist_view"/>
+    <field name="arch" type="xml">
+      <xpath expr="//group[@name='pricelist_settings']" position="inside">
+        <field name="yg_tope_descuento"/>
+        <field name="yg_descuento_max" invisible="not yg_tope_descuento"/>
+      </xpath>
+    </field>
+  </record>
+</odoo>
