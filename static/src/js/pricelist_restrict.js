@@ -1,5 +1,49 @@
 import { PosAccessRightPlugin } from "@point_of_sale/app/plugins/access_right_plugin";
+import { ProductScreen } from "@point_of_sale/app/screens/product_screen/product_screen";
+import { OrderSummary } from "@point_of_sale/app/screens/product_screen/order_summary/order_summary";
 import { patch } from "@web/core/utils/patch";
+
+/**
+ * ¿Se puede cambiar el precio de esta línea? Con la caja restringida, sólo el gerente,
+ * salvo que el producto tenga «Precio libre en caja» (pedido de Lucas, 15/10: los colores
+ * de auto se venden con un envase de precio 0 y el precio lo da el programa de color).
+ */
+function puedeCambiarPrecio(pos, linea) {
+    // Ojo: `disablePriceButton` devuelve «PUEDE cambiar el precio» (ver el patch de abajo).
+    if (pos.accessRight.disablePriceButton) {
+        return true;
+    }
+    return Boolean(linea?.product_id?.product_tmpl_id?.yg_precio_libre_pos);
+}
+
+patch(ProductScreen.prototype, {
+    /** El botón «Precio» se habilita también si la línea elegida es de un producto libre. */
+    getNumpadButtons() {
+        const linea = this.currentOrder?.getSelectedOrderline();
+        return super.getNumpadButtons(...arguments).map((boton) =>
+            boton.value === "price" && boton.disabled && puedeCambiarPrecio(this.pos, linea)
+                ? { ...boton, disabled: false }
+                : boton
+        );
+    },
+});
+
+patch(OrderSummary.prototype, {
+    /**
+     * Traba final: el teclado quedó en modo precio sobre un producto bloqueado. Al elegir
+     * otra línea el core ya vuelve a «Cantidad» (`selectOrderLine`); esto cubre cualquier
+     * otro camino. No se aplica la tecla y se vuelve a «Cantidad».
+     */
+    async updateSelectedOrderline({ buffer, key }) {
+        const linea = this.pos.getOrder()?.getSelectedOrderline();
+        if (this.pos.numpadMode === "price" && linea && !puedeCambiarPrecio(this.pos, linea)) {
+            this.numberBuffer.reset();
+            this.pos.numpadMode = "quantity";
+            return;
+        }
+        return super.updateSelectedOrderline(...arguments);
+    },
+});
 
 /**
  * Precio y lista de precios sólo para quien puede tocar precios (Lupatini: sólo gerentes).
