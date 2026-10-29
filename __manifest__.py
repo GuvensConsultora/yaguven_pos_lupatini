@@ -1,12 +1,12 @@
 {
     "name": "Yagüven — POS Lupatini Display",
-    "version": "20.0.1.8.0",
+    "version": "20.0.1.9.0",
     "category": "Point of Sale",
     "summary": "Toggle tarjeta/lista; árbol de categorías con breadcrumb; precio y stock en tarjeta.",
     "author": "Yagüven C.G.",
     "website": "https://yaguven.com",
     "license": "LGPL-3",
-    "depends": ["point_of_sale"],
+    "depends": ["point_of_sale", "pos_sale"],
     "data": [
         "views/product_pricelist_views.xml",
         "views/product_template_views.xml",
@@ -20,6 +20,7 @@
             "yaguven_pos_lupatini/static/src/js/product_card_list.js",
             "yaguven_pos_lupatini/static/src/js/pricelist_restrict.js",
             "yaguven_pos_lupatini/static/src/js/discount_button.js",
+            "yaguven_pos_lupatini/static/src/js/pricelist_index_fix.js",
             "yaguven_pos_lupatini/static/src/xml/category_tree.xml",
             "yaguven_pos_lupatini/static/src/xml/product_view_toggle.xml",
             "yaguven_pos_lupatini/static/src/xml/product_card_list.xml",
