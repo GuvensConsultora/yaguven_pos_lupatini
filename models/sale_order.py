@@ -36,8 +36,12 @@ class SaleOrder(models.Model):
         partner = self.env['res.partner'].browse(datos.get('partner_id') or 0).exists()
         anonimos = config.default_partner_id | (
             self.env.ref('l10n_ar.par_cfa', raise_if_not_found=False) or self.env['res.partner'])
-        if not partner or partner in anonimos:
+        if not partner:
             raise UserError(_('Elegí el cliente antes de guardar el presupuesto.'))
+        if partner in anonimos:
+            raise UserError(_('Un presupuesto a «%s» no se puede buscar después, cuando el cliente '
+                              'vuelve: cargá a la persona con su nombre y guardalo de nuevo.',
+                              partner.display_name))
 
         lineas = [l for l in datos.get('lines') or [] if l.get('product_id')]
         if not lineas:
