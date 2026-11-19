@@ -62,5 +62,19 @@ patch(ControlButtons.prototype, {
         this.notification.add(_t("Presupuesto %s guardado.", presupuesto.name), {
             type: "success",
         });
+
+        // Imprimir el presupuesto para dárselo al cliente (pedido de Anael, 19/11/2026). Va
+        // después de guardarlo: si el PDF falla, el presupuesto ya existe y se reimprime desde
+        // Ventas; por eso el error sólo avisa y no deshace nada.
+        try {
+            await this.env.services.report.doAction("sale.action_report_saleorder", [
+                presupuesto.id,
+            ]);
+        } catch {
+            this.notification.add(
+                _t("El presupuesto %s quedó guardado, pero no se pudo abrir para imprimir. Lo podés imprimir desde Ventas.", presupuesto.name),
+                { type: "warning" }
+            );
+        }
     },
 });
