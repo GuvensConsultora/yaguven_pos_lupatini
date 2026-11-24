@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <!--
+        La lista de precios de la venta, a la vista debajo del cliente (pedido de Anael, 20/11: al
+        cambiar de cliente cambia la lista y el cajero no lo notaba). El botón de lista del core
+        queda dentro del menú «⋮»; acá sólo se muestra, cambiarla sigue siendo del gerente.
+    -->
+    <t t-inherit="point_of_sale.SelectPartnerButton" t-inherit-mode="extension">
+        <xpath expr="//button" position="inside">
+            <small t-if="!this.ui.isSmall and this.pos.getOrder()?.pricelist_id"
+                   class="d-block text-muted text-truncate lh-1 yg-lista-cliente"
+                   t-out="'Lista: ' + this.pos.getOrder().pricelist_id.display_name"/>
+        </xpath>
+    </t>
+</templates>
