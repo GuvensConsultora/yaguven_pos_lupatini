@@ -1,6 +1,6 @@
 {
     "name": "Yagüven — POS Lupatini Display",
-    "version": "20.0.1.12.0",
+    "version": "20.0.1.13.0",
     "category": "Point of Sale",
     "summary": "Toggle tarjeta/lista; árbol de categorías con breadcrumb; precio y stock en tarjeta.",
     "author": "Yagüven C.G.",
@@ -10,6 +10,7 @@
     "data": [
         "views/product_pricelist_views.xml",
         "views/product_template_views.xml",
+        "views/product_pricelist_item_menu.xml",
     ],
     "assets": {
         "point_of_sale._assets_pos": [

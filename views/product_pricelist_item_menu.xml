@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!--
+    «Detalle lista de precios» (pedido de Anael, 24/11): todas las reglas de todas las listas en un
+    solo listado, como el que tenían en O17 bajo Ventas. Usa la vista de lista nativa de las reglas
+    (lista, aplicado en, cantidad mínima, vigencia, precio, empresa). Sólo administradores de Ventas.
+  -->
+  <record id="action_yg_detalle_lista_precios" model="ir.actions.act_window">
+    <field name="name">Detalle lista de precios</field>
+    <field name="res_model">product.pricelist.item</field>
+    <field name="view_mode">list,form</field>
+  </record>
+
+  <menuitem id="menu_yg_detalle_lista_precios"
+            name="Detalle lista de precios"
+            parent="sale.product_menu_catalog"
+            action="action_yg_detalle_lista_precios"
+            groups="sales_team.group_sale_manager"
+            sequence="41"/>
+</odoo>
