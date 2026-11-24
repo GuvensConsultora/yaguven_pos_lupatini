@@ -21,7 +21,7 @@ class PosOrder(models.Model):
                 and linea
                 and linea.product_id.product_tmpl_id.yg_precio_libre_pos
                 and linea.full_product_name
-                and linea.full_product_name != linea.product_id.display_name
+                and linea.full_product_name not in (linea.product_id.name, linea.product_id.display_name)
             ):
                 vals['name'] = linea.full_product_name
         return res

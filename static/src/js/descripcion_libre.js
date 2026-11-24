@@ -1,4 +1,6 @@
 import { ControlButtons } from "@point_of_sale/app/screens/product_screen/control_buttons/control_buttons";
+import { PosOrderline } from "@point_of_sale/app/models/pos_order_line";
+import { constructFullProductName } from "@point_of_sale/utils";
 import { TextInputPopup } from "@point_of_sale/app/components/popups/text_input_popup/text_input_popup";
 import { makeAwaitable } from "@point_of_sale/app/utils/make_awaitable_dialog";
 import { patch } from "@web/core/utils/patch";
@@ -44,5 +46,20 @@ patch(ControlButtons.prototype, {
         } else {
             linea.setFullProductName();
         }
+    },
+});
+
+/** En el renglón de la caja (y el ticket) se ve el texto cambiado; el core muestra `product_id.name`. */
+patch(PosOrderline.prototype, {
+    get orderDisplayProductName() {
+        const res = super.orderDisplayProductName;
+        if (
+            this.product_id?.product_tmpl_id?.yg_precio_libre_pos &&
+            this.full_product_name &&
+            this.full_product_name !== constructFullProductName(this)
+        ) {
+            return { ...res, name: this.full_product_name, attributeString: "" };
+        }
+        return res;
     },
 });
