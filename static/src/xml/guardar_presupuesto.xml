@@ -11,6 +11,14 @@
                 onClick="() => this.onClickGuardarPresupuesto()"
                 disabled="this.pos.disableForSelfOrder">
             </t>
+            <!-- «Descripción» del renglón en productos de precio libre (pedido de Anael, 24/11). -->
+            <t t-call="point_of_sale.controlButton"
+                t-if="this.yg_puedeCambiarDescripcion"
+                icon="'edit_note'"
+                btnText="'Descripción'"
+                btnClasses="'btn-secondary yg-descripcion-libre '"
+                onClick="() => this.onClickDescripcionLibre()">
+            </t>
         </xpath>
     </t>
 </templates>
