@@ -1,7 +1,9 @@
 import { PosAccessRightPlugin } from "@point_of_sale/app/plugins/access_right_plugin";
 import { ProductScreen } from "@point_of_sale/app/screens/product_screen/product_screen";
 import { OrderSummary } from "@point_of_sale/app/screens/product_screen/order_summary/order_summary";
+import { ControlButtons } from "@point_of_sale/app/screens/product_screen/control_buttons/control_buttons";
 import { patch } from "@web/core/utils/patch";
+import { _t } from "@web/core/l10n/translation";
 
 /**
  * ¿Se puede cambiar el precio de esta línea? Con la caja restringida, sólo el gerente,
@@ -67,8 +69,30 @@ patch(PosAccessRightPlugin.prototype, {
         return !this.config.restrict_price_control || this.loggedCashier?._role === "manager";
     },
 
+    /**
+     * El botón de lista se VE siempre (con el nombre de la lista de la venta debajo), para que el
+     * cajero note cuando cambia al elegir otro cliente (pedido de Anael, 20/11). Cambiarla sigue
+     * siendo sólo del gerente: ver `clickPricelist` abajo.
+     */
     get canAccessPricelist() {
-        const puede = !this.config.restrict_price_control || this.loggedCashier?._role === "manager";
-        return puede && super.canAccessPricelist;
+        return super.canAccessPricelist;
+    },
+
+    /** ¿Puede este cajero cambiar la lista de la venta? */
+    get yg_puedeCambiarLista() {
+        return !this.config.restrict_price_control || this.loggedCashier?._role === "manager";
+    },
+});
+
+patch(ControlButtons.prototype, {
+    async clickPricelist() {
+        if (!this.pos.accessRight.yg_puedeCambiarLista) {
+            this.notification.add(
+                _t("La lista de precios la toma del cliente. Sólo un gerente puede cambiarla."),
+                { type: "info" }
+            );
+            return;
+        }
+        return await super.clickPricelist(...arguments);
     },
 });

@@ -27,21 +27,74 @@ patch(ProductScreen.prototype, {
  * tienen tope (mismo criterio que el cambio de precio). El servidor lo controla
  * también (`pos.order.line._yg_check_tope_descuento`).
  */
+/** Máximo de descuento que rige para el cajero en esta venta, o null si no hay tope. */
+function topeDescuento(pos, order) {
+    const lista = order?.pricelist_id;
+    if (!lista?.yg_tope_descuento) {
+        return null;
+    }
+    if (pos.accessRight?.loggedCashier?._role === "manager") {
+        return null;
+    }
+    return lista.yg_descuento_max || 0;
+}
+
+/**
+ * Al cambiar de cliente o de lista, el core recalcula los precios (`setPricelist`) pero deja
+ * el descuento de cada línea como estaba (pedido de Anael, 20/11: Consumidor Final con 20 %
+ * y después se cambia a un cliente de otra lista). Se baja al tope de la lista nueva y se
+ * avisa; si no, el servidor lo rechaza recién al cobrar.
+ */
+function ajustarAlTope(pos, order) {
+    const max = topeDescuento(pos, order);
+    if (max === null) {
+        return;
+    }
+    const lineas = (order.lines || []).filter((l) => (l.discount || 0) > max);
+    if (!lineas.length) {
+        return;
+    }
+    for (const linea of lineas) {
+        linea.setDiscount(max);
+    }
+    pos.notification.add(
+        _t(
+            "La lista %s admite hasta %s %% de descuento: se ajustó el descuento de %s línea(s).",
+            order.pricelist_id.display_name,
+            max,
+            lineas.length
+        ),
+        { type: "warning" }
+    );
+}
+
 patch(PosStore.prototype, {
     async setDiscountFromUI(line, val) {
-        const lista = line.order_id?.pricelist_id;
-        const esGerente = this.accessRight?.loggedCashier?._role === "manager";
+        const max = topeDescuento(this, line.order_id);
         const pedido = parseFloat(val);
-        if (lista?.yg_tope_descuento && !esGerente && !isNaN(pedido)) {
-            const max = lista.yg_descuento_max || 0;
-            if (pedido > max) {
-                this.notification.add(
-                    _t("La lista %s admite hasta %s %% de descuento.", lista.display_name, max),
-                    { type: "warning" }
-                );
-                return await super.setDiscountFromUI(line, max);
-            }
+        if (max !== null && !isNaN(pedido) && pedido > max) {
+            this.notification.add(
+                _t(
+                    "La lista %s admite hasta %s %% de descuento.",
+                    line.order_id.pricelist_id.display_name,
+                    max
+                ),
+                { type: "warning" }
+            );
+            return await super.setDiscountFromUI(line, max);
         }
         return await super.setDiscountFromUI(line, val);
+    },
+
+    setPartnerToCurrentOrder(partner) {
+        const res = super.setPartnerToCurrentOrder(...arguments);
+        ajustarAlTope(this, this.getOrder());
+        return res;
+    },
+
+    async selectPricelist(pricelist) {
+        const res = await super.selectPricelist(...arguments);
+        ajustarAlTope(this, this.getOrder());
+        return res;
     },
 });
