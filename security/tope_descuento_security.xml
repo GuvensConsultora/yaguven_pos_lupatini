@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Pedido de Anael (25/11/2026): el tope de descuento de la lista también en Ventas, y que
+         sólo ella pueda superarlo «por ahora». El grupo nace vacío (regla B.23): a quién se le
+         da se decide desde Ajustes › Usuarios, no en el código. -->
+    <record id="module_category_tope_descuento" model="ir.module.category">
+        <field name="name">Descuentos</field>
+        <field name="sequence">96</field>
+    </record>
+
+    <record id="privilege_tope_descuento" model="res.groups.privilege">
+        <field name="name">Descuentos</field>
+        <field name="category_id" ref="module_category_tope_descuento"/>
+        <field name="sequence">96</field>
+    </record>
+
+    <record id="group_supera_tope_descuento" model="res.groups">
+        <field name="name">Puede superar el tope de descuento en Ventas</field>
+        <field name="privilege_id" ref="privilege_tope_descuento"/>
+        <field name="comment">Quien tiene este permiso puede dar en Ventas más descuento que el
+            máximo de la lista de precios. El resto, al guardar, recibe un aviso con el máximo.</field>
+    </record>
+
+</odoo>
