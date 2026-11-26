@@ -30,12 +30,14 @@ class SaleOrderLine(models.Model):
 
         La caja ya lo tenía (`pos_order_line.py`). Acá sólo pasa quien tiene el permiso
         «Puede superar el tope de descuento en Ventas». Quedan afuera:
-        - los procesos internos del sistema (superusuario);
         - las cargas por script que lo piden con el contexto `yg_sin_tope_descuento`
           (migración de ventas históricas, que ya traen sus descuentos).
         Sólo se revisa lo que se crea o se modifica: las ventas ya hechas no se tocan.
+
+        Ojo: Odoo 20 corre las validaciones en sudo (`_validate_fields`), así que `env.su` es
+        siempre True acá; el usuario real sigue siendo `env.user`. Por eso no se exime el sudo.
         """
-        if self.env.su or self.env.context.get('yg_sin_tope_descuento'):
+        if self.env.context.get('yg_sin_tope_descuento'):
             return
         if self.env.user.has_group(GRUPO_SUPERA_TOPE):
             return
